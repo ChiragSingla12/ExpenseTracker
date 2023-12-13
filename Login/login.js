@@ -5,7 +5,6 @@ function login(e) {
     const loginDetails = {
         email: e.target.email.value,
         password: e.target.password.value
-
     }
     console.log(loginDetails);
     axios.post('http://localhost:3000/user/login', loginDetails)
