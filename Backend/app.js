@@ -11,11 +11,18 @@ app.use(express.json())//for handling json data
 app.use(express.urlencoded({ extended: false }));
 app.use(bodyParser.json({ extended: false }));
 
-
+const User = require('./models/user');
+const Expense = require('./models/expenses');
 
 
 const userRoute = require('./routes/signuproute');
+const expenseRoute = require('./routes/expenseroute')
 app.use('/user', userRoute);
+app.use('/expense', expenseRoute);
+
+
+User.hasMany(Expense);
+Expense.belongsTo(User);
 
 sequelize
     .sync()
