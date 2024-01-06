@@ -1,3 +1,5 @@
+// const { response } = require("express");
+
 const login = async (e) => {
     e.preventDefault();
     console.log(e.target.name);
@@ -11,22 +13,23 @@ const login = async (e) => {
 
     try {
         const res = await axios.post('http://localhost:3000/user/login', loginDetails)
-        console.log('res',res)
+        console.log('res', res);
 
         if(res.data){
-            notif.classList.toggle('notif2');
+            // notif.classList.toggle('notif2');
             setTimeout(() => {
                 notif.classList.toggle('notif2');
-                window.location.href = "../ExpenseTracker/index.html"// change the page on successful login 
+                window.location.href = "../ExpenseTracker/index.html"// change the page on successful login /
             }, 1500);
             notif.innerHTML = `${res.data.message}`;
+            localStorage.setItem('token', res.data.token);
             // alert(res.data.message)
         }
     } catch (err) {
         notif.classList.toggle('notif3');
         setTimeout(() => {
             notif.classList.toggle('notif3');
-        }, 2000);
+        }, 1500);
         notif.innerHTML = `${err.response.data.message}`;
         console.log('error',err)
         // alert(err.response.data.message);

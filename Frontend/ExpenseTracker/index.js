@@ -1,5 +1,5 @@
-async function addNewExpense(event){
-    try{
+async function addNewExpense(event) {
+    try {
         event.preventDefault();
         const expenseDetails = {
             expenseamount: event.target.expenseamount.value,
@@ -7,18 +7,21 @@ async function addNewExpense(event){
             category: event.target.category.value
         }
         console.log(expenseDetails);
-        const response = await axios.post('http://localhost:3000/expense/addexpense', expenseDetails)
-        console.log(response);
-        if(response.status === 201){
+        const token = localStorage.getItem('token');
+        const response = await axios.post('http://localhost:3000/expense/addexpense', expenseDetails, { headers: { 'Authorization': token } })
+        console.log('res', response);
+        if (response.status === 201) {
             addNewExpensetoUI(response.data.expense);
         }
-    }catch(err){
+    } catch (err) {
         showError(err);
     }
 }
 
-window.addEventListener('DOMContentLoaded',  () => {
-    axios.get('http://localhost:3000/expense/getexpenses').then(response => {
+window.addEventListener('DOMContentLoaded', () => {
+    const token = localStorage.getItem('token');
+
+    axios.get('http://localhost:3000/expense/getexpenses', { headers: { 'Authorization': token } }).then(response => {
         console.log(response.data.data);
         response.data.data.forEach(expense => {
             addNewExpensetoUI(expense);
@@ -26,11 +29,11 @@ window.addEventListener('DOMContentLoaded',  () => {
     })
 })
 
-function addNewExpensetoUI(expense){
+function addNewExpensetoUI(expense) {
     const parentElement = document.getElementById('listOfExpenses');
     const expenseElemId = `${expense.id}`;
-    parentElement.innerHTML += 
-    `<li id=${expenseElemId}>
+    parentElement.innerHTML +=
+        `<li id=${expenseElemId}>
             ${expense.expenseamount} - ${expense.category} - ${expense.description}
             <button onclick='deleteExpense(event, ${expense.id})'> Delete Expense </button>
             <p>hi there</p>
@@ -38,22 +41,22 @@ function addNewExpensetoUI(expense){
 }
 
 function deleteExpense(e, expenseid) {
-    // const token = localStorage.getItem('token');
-    axios.delete(`http://localhost:3000/expense/deleteexpense/${expenseid}`).then((response) => {
+    const token = localStorage.getItem('token');
+    axios.delete(`http://localhost:3000/expense/deleteexpense/${expenseid}`,{ headers: { 'Authorization': token } }).then((response) => {
 
-    if(response.status === 200){
+        if (response.status === 200) {
             removeExpensefromUI(expenseid);
-        } 
+        }
     }).catch((err => {
         showError(err);
     }))
 }
 
-function showError(err){
+function showError(err) {
     document.body.innerHTML += `<div style="color:red;"> ${err}</div>`
 }
 
-function removeExpensefromUI(expenseid){
+function removeExpensefromUI(expenseid) {
     const expenseElemId = `${expenseid}`;
     document.getElementById(expenseElemId).remove();
 }

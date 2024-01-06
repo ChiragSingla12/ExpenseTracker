@@ -5,6 +5,7 @@ const bodyParser = require('body-parser');
 const sequelize = require('./util/sequelize');
 
 const cors = require('cors');
+const jwt = require('jsonwebtoken');
 app.use(cors());
 
 app.use(express.json())//for handling json data

@@ -16,11 +16,11 @@ async function userDetail(event) {
         console.log(response);
 
         if (response.status === 201) {
-            notif.classList.toggle('notif2');
-            setTimeout(() => {
-                notif.classList.toggle('notif2');
-            window.location.href = "../login/login.html"// change the page on successful login 
-            }, 2000);
+            // notif.classList.toggle('notif2');
+                setTimeout(() => {
+                    notif.classList.toggle('notif2');
+                    window.location.href = "../login/login.html"// change the page on successful login 
+                }, 2000);
             notif.innerHTML = `${response.data.message}`;
         } 
     } catch (err) {
