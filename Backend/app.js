@@ -3,6 +3,8 @@ const app = express();
 
 const bodyParser = require('body-parser');
 const sequelize = require('./util/sequelize');
+const Order = require('./models/orders');
+const dotenv = require('dotenv');
 
 const cors = require('cors');
 const jwt = require('jsonwebtoken');
@@ -17,13 +19,18 @@ const Expense = require('./models/expenses');
 
 
 const userRoute = require('./routes/signuproute');
-const expenseRoute = require('./routes/expenseroute')
+const expenseRoute = require('./routes/expenseroute');
+const purchaseRoutes = require('./routes/purchase');
+
 app.use('/user', userRoute);
 app.use('/expense', expenseRoute);
-
+app.use('/purchase', purchaseRoutes);
 
 User.hasMany(Expense);
 Expense.belongsTo(User);
+
+User.hasMany(Order);
+Order.belongsTo(User);
 
 sequelize
     .sync()

@@ -19,7 +19,6 @@ const authenticate = (req, res, next) => {
         return res.status(401).send({'success': false})
         // err
       }
-
 }
 module.exports = {
     authenticate

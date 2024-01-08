@@ -9,7 +9,8 @@ function isstringvalid(string) {
         return false;
     }
 }
-exports.signup = async (req, res, next) => {
+
+const signup = async (req, res, next) => {
     try {
         const name = req.body.name;
         const email = req.body.email;
@@ -44,7 +45,7 @@ function generateAccessToken(id){
     return jwt.sign({userId: id}, 'secretkey');
 }
 
-exports.login = async (req, res, next) => {
+const login = async (req, res, next) => {
     const { email, password } = req.body;
     try {
         const user = await User.findAll({ where: { email } });
@@ -66,4 +67,11 @@ exports.login = async (req, res, next) => {
         console.log(err)
         res.status(400).send({ 'success': false, 'message': 'something went wrong' });
     }
+}
+
+module.exports = {
+    signup,
+    login,
+    generateAccessToken
+
 }
