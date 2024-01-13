@@ -3,28 +3,18 @@ const Expense = require('../models/expenses');
 const sequelize = require('../util/sequelize');
 const e = require('express');
 
-
 const getUserLeaderBoard = async (req, res) => {
-    try{
+    try {
         const leaderboardofusers = await User.findAll({
-            attributes: ['id', 'name',[sequelize.fn('sum', sequelize.col('expenses.expenseamount')), 'total_cost'] ],
-            include: [                    //include means what we want to include here, bydefault it is a left outer join, we are using joins for prod
-                {
-                    model: Expense,
-                    attributes: []
-                }
-            ],
-            group:['user.id'],
-            order:[['total_cost', 'DESC']]
-
+            order: [['totalExpenses', 'DESC']]
         })
 
         res.status(200).json(leaderboardofusers)
 
-} catch (err){
-    console.log(err)
-    res.status(500).json(err)
-}
+    } catch (err) {
+        console.log(err)
+        res.status(500).json(err)
+    }
 }
 //aggregate all th expenses based on the user id
 
