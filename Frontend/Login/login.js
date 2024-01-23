@@ -35,3 +35,7 @@ const login = async (e) => {
         // alert(err.response.data.message);
     }
 }
+
+function forgotpassword() {
+    window.location.href = "../ForgotPassword/index.html"
+}
