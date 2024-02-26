@@ -1,9 +1,9 @@
 const AWS = require('aws-sdk');
 
 const uploadToS3 = (data, filename) => {
-    const BUCKET_NAME = 'expensetracking21';
-    const IAM_USER_KEY = 'AKIA47CR3UKDEGD5ZTT7';
-    const IAM_USER_SECRET = '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';
+    const BUCKET_NAME = process.env.BUCKET_NAME;
+    const IAM_USER_KEY = process.env.IAM_USER_KEY;
+    const IAM_USER_SECRET = process.env.IAM_USER_SECRET;
 
     let s3bucket = new AWS.S3({
         accessKeyId: IAM_USER_KEY,
