@@ -2,6 +2,61 @@ const Expense = require('../models/expenses');
 const jwt = require('jsonwebtoken');
 const User = require('../models/user');
 const sequelize = require('../util/sequelize');
+const UserServices = require('../services/userservices');
+const S3service = require('../services/S3services')
+const AWS = require('aws-sdk');
+
+
+function uploadToS3(data, filename) {
+    const BUCKET_NAME = process.env.BUCKET_NAME;
+    const IAM_USER_KEY = process.env.IAM_USER_KEY;
+    const IAM_USER_SECRET = process.env.IAM_USER_SECRET;
+
+    let s3bucket = new AWS.S3({
+        accessKeyId: IAM_USER_KEY,
+        secretAccessKey: IAM_USER_SECRET,
+    })
+
+    var params = {
+        Bucket: BUCKET_NAME,
+        Key: filename,
+        Body: data,
+        ACL: 'public-read'
+    }
+
+
+    return new Promise((resolve, reject) => {
+        s3bucket.upload(params, (err, s3response) => {
+            if (err) {
+                console.log('Something went wrong', err)
+                reject(err);
+            } else {
+                console.log('success', s3response);
+                resolve(s3response.Location);
+            }
+        })
+    })
+
+}
+
+
+const downloadexpense = async (req, res) => {
+    try{
+        const expenses = await UserServices.getExpenses(req);
+        const stringifiedExpenses = JSON.stringify(expenses);
+
+        //it should depend upon the userid
+        const userId = req.user.id;
+        const filename = `Expense${userId}/${new Date()}.txt`;
+        const fileURL = await S3service.uploadToS3(stringifiedExpenses, filename);
+        res.status(200).json({ fileURL, success: true });
+    }catch(err){
+        console.log(err);
+        res.status(500).json({ fileURL:'', 'success': false, err: err });
+    }
+
+}
+
 
 
 const addexpense = async (req, res) => {
@@ -61,22 +116,9 @@ const deleteExpense = async (req, res) => {
     }
 }
 
-
-// const deleteExpense = (req, res) => {
-    // const expenseid = req.params.expenseid;
-//     Expense.destroy({ where: { id: expenseid, userId: req.user.id } }).then((noofrows) => {
-//         if (noofrows === 0) {
-//             return res.status(404).send({ "success": false, "message": 'Expense doenst belong to the user' })
-//         }
-//         return res.status(200).send({ "success": true, "message": "Deleted Successfuly" })
-//     }).catch(err => {
-//         console.log(err);
-//         return res.status(403).send({ "success": true, "message": "Failed" });
-//     })
-// }
-
 module.exports = {
     getexpenses,
     deleteExpense,
-    addexpense
+    addexpense,
+    downloadexpense
 }
