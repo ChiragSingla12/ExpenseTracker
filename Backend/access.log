@@ -1,0 +1,4 @@
+::1 - - [28/Feb/2024:17:42:51 +0000] "OPTIONS /expense/getexpenses HTTP/1.1" 204 0 "http://127.0.0.1:5500/" "Mozilla/5.0 (Linux; Android 6.0; Nexus 5 Build/MRA58N) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/122.0.0.0 Mobile Safari/537.36"
+::1 - - [28/Feb/2024:17:42:51 +0000] "GET /expense/getexpenses HTTP/1.1" 304 - "http://127.0.0.1:5500/" "Mozilla/5.0 (Linux; Android 6.0; Nexus 5 Build/MRA58N) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/122.0.0.0 Mobile Safari/537.36"
+::1 - - [28/Feb/2024:17:42:58 +0000] "OPTIONS /expense/getexpenses HTTP/1.1" 204 0 "http://127.0.0.1:5500/" "Mozilla/5.0 (Linux; Android 6.0; Nexus 5 Build/MRA58N) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/122.0.0.0 Mobile Safari/537.36"
+::1 - - [28/Feb/2024:17:42:58 +0000] "GET /expense/getexpenses HTTP/1.1" 304 - "http://127.0.0.1:5500/" "Mozilla/5.0 (Linux; Android 6.0; Nexus 5 Build/MRA58N) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/122.0.0.0 Mobile Safari/537.36"
