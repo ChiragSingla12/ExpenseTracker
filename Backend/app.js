@@ -1,8 +1,13 @@
 const express = require('express');
+const fs = require('fs');
+const path = require('path');
 const app = express();
 
+const helmet = require('helmet');
+const morgan = require('morgan');
 const bodyParser = require('body-parser');
 const sequelize = require('./util/sequelize');
+
 
 const Order = require('./models/orders');
 const User = require('./models/user');
@@ -14,12 +19,17 @@ const dotenv = require('dotenv');
 const cors = require('cors');
 const jwt = require('jsonwebtoken');
 
+const accessLogStream = fs.createWriteStream(
+    path.join(__dirname, 'access.log'),
+    { flags : 'a'} // flag: a for appending not overwriting
+);
+
+app.use(morgan('combined', {stream: accessLogStream}));
 app.use(cors());
 app.use(express.json())//for handling json data
 app.use(express.urlencoded({ extended: false }));
 app.use(bodyParser.json({ extended: false }));
-
-
+app.use(helmet());
 
 const userRoute = require('./routes/signuproute');
 const expenseRoute = require('./routes/expenseroute');
@@ -41,6 +51,7 @@ Order.belongsTo(User);
 
 User.hasMany(Forgotpassword);
 Forgotpassword.belongsTo(User);
+
 
 sequelize
     .sync()
