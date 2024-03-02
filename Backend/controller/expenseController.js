@@ -8,7 +8,7 @@ const AWS = require('aws-sdk');
 
 
 const downloadexpense = async (req, res) => {
-    try{
+    try {
         const expenses = await UserServices.getExpenses(req);
         const stringifiedExpenses = JSON.stringify(expenses);
 
@@ -17,9 +17,9 @@ const downloadexpense = async (req, res) => {
         const filename = `Expense${userId}/${new Date()}.txt`;
         const fileURL = await S3service.uploadToS3(stringifiedExpenses, filename);
         res.status(200).json({ fileURL, success: true });
-    }catch(err){
+    } catch (err) {
         console.log(err);
-        res.status(500).json({ fileURL:'', 'success': false, err: err });
+        res.status(500).json({ fileURL: '', 'success': false, err: err });
     }
 
 }
@@ -54,12 +54,38 @@ const addexpense = async (req, res) => {
     }
 }
 
-const getexpenses = (req, res) => {
-    Expense.findAll({ where: { userId: req.user.id } }).then(expense => {
-        return res.status(200).send({ 'data': expense, 'success': true });
-    }).catch(err => {
-        return res.status(400).send({ 'error': err, 'success': true });
-    })
+
+
+
+
+const getexpenses = async (req, res) => {
+    //     Expense.findAll({ where: { userId: req.user.id } }).then(expense => {
+    //         return res.status(200).send({ 'data': expense, 'success': true });
+    try {
+        const currentPage = req.query.page || 1; // Changed 'Page' to 'page' for consistency
+        const limit = 5;
+        const total = await Expense.count({ where: { userId: req.user.id } });
+        const hasNextPage = (currentPage * limit) < total;
+        const nextPage = hasNextPage ? Number(currentPage) + 1 : null; // Calculate next page number
+
+        const expenses = await req.user.getExpenses({ offset: (currentPage - 1) * limit, limit: limit });
+        // console.log(expenses);
+
+        const pageData = {
+            currentPage: Number(currentPage),
+            lastPage: Math.ceil(total / limit),
+            hasNextPage,
+            previousPage: currentPage > 1 ? currentPage - 1 : null, // Set previous page number or null for the first page
+            nextPage
+        };
+
+        const response = { expenses, pageData }; // Combine expenses and pageData into a single object
+        console.log(pageData)
+        res.status(200).json(response);
+    } catch (err) {
+        console.error(err);
+        res.status(500).json({ error: 'An error occurred while fetching expenses.' });
+    }
 }
 
 
