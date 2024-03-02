@@ -1,3 +1,6 @@
+const ul = document.getElementById('listOfExpenses')
+const pages = document.getElementById('pages');
+
 async function addNewExpense(event) {
     try {
         event.preventDefault();
@@ -35,6 +38,44 @@ function parseJwt(token) {
 }
 
 
+
+
+async function sendGetRequest(page) {
+    const token = localStorage.getItem('token');
+    try {
+        const { data } = await axios.get(`http://localhost:3000/expense/getexpenses?page=${page}`, { headers: { "Authorization": token } });
+        console.log(data);
+        const { expenses, pageData } = data;
+
+        ul.innerHTML = '';
+        expenses.forEach(expense => {
+            addNewExpensetoUI(expense);
+        });
+        pages.innerHTML = '';
+
+        if (+pageData.previousPage > 0) {
+            console.log(pageData.previousPage, 'type-', typeof (pageData.previousPage), 'typeof', typeof (+pageData.previousPage));
+            if (+pageData.previousPage > 1) {
+                pages.innerHTML = `<button id='page1' onclick='sendGetRequest(1)'>1</button>`
+
+            }
+            // pages.innerHTML = '';
+            pages.innerHTML += `<button id='page${pageData.previousPage}' onclick='sendGetRequest(${pageData.previousPage})'>${pageData.previousPage}</button>`;
+        }
+        // expenses.remove();
+        pages.innerHTML += `<button id='page${pageData.currentPage}' onclick='sendGetRequest(${pageData.currentPage})'>${pageData.currentPage}</button>`;
+        document.getElementById(`page${page}`).className = 'active';
+        if (pageData.hasNextPage) {
+            // expenses.remove();
+            pages.innerHTML += `<button id='page${pageData.nextPage}' onclick='sendGetRequest(${pageData.nextPage})'>${pageData.nextPage}</button>`
+        }
+    }
+    catch (err) {
+        console.log(err);
+    }
+}
+
+
 window.addEventListener('DOMContentLoaded', () => {
     const token = localStorage.getItem('token');
     const decodeToken = parseJwt(token)
@@ -44,13 +85,39 @@ window.addEventListener('DOMContentLoaded', () => {
         showPremiumuserMessage();
         showLeaderboard();
     }
-    axios.get('http://localhost:3000/expense/getexpenses', { headers: { 'Authorization': token } }).then(response => {
-        console.log(response.data.data);
-        response.data.data.forEach(expense => {
-            addNewExpensetoUI(expense);
-        })
-    })
+    // axios.get('http://localhost:3000/expense/getexpenses', { headers: { 'Authorization': token } }).then(response => {
+    //     console.log(response.data.data);
+    //     response.data.data.forEach(expense => {
+    //         addNewExpensetoUI(expense);
+    //     })
+    // })
+
+    const page = 1;
+    sendGetRequest(page);
+
 })
+
+
+
+
+
+// original ================
+// window.addEventListener('DOMContentLoaded', () => {
+//     const token = localStorage.getItem('token');
+//     const decodeToken = parseJwt(token)
+//     console.log(decodeToken);
+//     const ispremiumuser = decodeToken.ispremiumuser
+//     if (ispremiumuser) {
+//         showPremiumuserMessage();
+//         showLeaderboard();
+//     }
+//     axios.get('http://localhost:3000/expense/getexpenses', { headers: { 'Authorization': token } }).then(response => {
+//         console.log(response.data.data);
+//         response.data.data.forEach(expense => {
+//             addNewExpensetoUI(expense);
+//         })
+//     })
+// })
 
 
 function addNewExpensetoUI(expense) {
