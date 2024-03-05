@@ -48,17 +48,31 @@
 
         <center>
             <div class="desc">
-                <div id="message"></div>
                 <button id="rzp-button1">buy premium</button>
 
-                <div class="desc_inside" id='listOfExpenses'>
-                    <h1>Expenses</h1>
+                <div class="desc_inside" id='listOfExpenses'></div>
+                <!-- <h1>Expenses</h1> -->
+                <!-- <div class="container" id="pages"></div> -->
+                <div>
+                    <span>
+                        <label for="per-page">Select Expenses per page:</label>
+                        <select name="per-page" id="per-page">                
+                            <!-- <option value="">--from below--</option> -->
+                            <option selected>5</option>
+                            <option>5</option>
+                            <option>7</option>
+                            <option>9</option>
+                            <option>11</option>
+                            <option>13</option>
+                        </select>
+                    </span>
+                    <div id="pages"></div>
                 </div>
                 <ul id="leaderboard"></ul>
-                <div id="pages"></div>
             </div>
         </center>
     </div>
+
     <center>
         <div class="desc">
             <button onclick="download()" id="downloadexpense">Download File</button>

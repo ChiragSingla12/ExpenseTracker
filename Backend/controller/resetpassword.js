@@ -21,7 +21,7 @@ const forgotpassword = async (req, res) => {
                 to: email, // list of receivers
                 subject: "Hello ✔", // Subject line
                 text: "Hello world?", // plain text body
-                html: `<a href="http://localhost:3000/password/resetpassword/${id}">Reset password</a>` // html body
+                html: `<a href="http://localhost:3000/password/reset-password/${id}">Reset password</a>` // html body
             });
 
             console.log("Message sent: %s", info.messageId);

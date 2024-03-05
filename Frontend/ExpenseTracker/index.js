@@ -1,5 +1,11 @@
 const ul = document.getElementById('listOfExpenses')
 const pages = document.getElementById('pages');
+const select = document.getElementById('per-page');
+
+select.oninput = () => {
+    localStorage.setItem("number", select.value);
+    console.log(select.value, localStorage.getItem('number'));
+}
 
 async function addNewExpense(event) {
     try {
@@ -11,7 +17,7 @@ async function addNewExpense(event) {
         }
         console.log(expenseDetails);
         const token = localStorage.getItem('token');
-        const response = await axios.post('http://localhost:3000/expense/addexpense', expenseDetails, { headers: { 'Authorization': token } })
+        const response = await axios.post('http://localhost:3000/expense/add-expense', expenseDetails, { headers: { 'Authorization': token } })
         console.log('res', response);
         if (response.data) {
             console.log(response.data.expense)
@@ -43,7 +49,11 @@ function parseJwt(token) {
 async function sendGetRequest(page) {
     const token = localStorage.getItem('token');
     try {
-        const { data } = await axios.get(`http://localhost:3000/expense/getexpenses?page=${page}`, { headers: { "Authorization": token } });
+        let number = 5;
+        if (localStorage.getItem('number')) {
+            number = localStorage.getItem('number');
+        }
+        const { data } = await axios.get(`http://localhost:3000/expense/get-expenses?page=${page}&number=${number}`, { headers: { "Authorization": token } });
         console.log(data);
         const { expenses, pageData } = data;
 
@@ -55,9 +65,9 @@ async function sendGetRequest(page) {
 
         if (+pageData.previousPage > 0) {
             console.log(pageData.previousPage, 'type-', typeof (pageData.previousPage), 'typeof', typeof (+pageData.previousPage));
+
             if (+pageData.previousPage > 1) {
                 pages.innerHTML = `<button id='page1' onclick='sendGetRequest(1)'>1</button>`
-
             }
             // pages.innerHTML = '';
             pages.innerHTML += `<button id='page${pageData.previousPage}' onclick='sendGetRequest(${pageData.previousPage})'>${pageData.previousPage}</button>`;
@@ -80,44 +90,19 @@ window.addEventListener('DOMContentLoaded', () => {
     const token = localStorage.getItem('token');
     const decodeToken = parseJwt(token)
     console.log(decodeToken);
-    const ispremiumuser = decodeToken.ispremiumuser
+    const ispremiumuser = decodeToken.ispremiumuser;
+
     if (ispremiumuser) {
         showPremiumuserMessage();
         showLeaderboard();
     }
-    // axios.get('http://localhost:3000/expense/getexpenses', { headers: { 'Authorization': token } }).then(response => {
-    //     console.log(response.data.data);
-    //     response.data.data.forEach(expense => {
-    //         addNewExpensetoUI(expense);
-    //     })
-    // })
-
     const page = 1;
     sendGetRequest(page);
+    if (localStorage.getItem('number')) {
+        select.value = localStorage.getItem('number');
+    }
 
 })
-
-
-
-
-
-// original ================
-// window.addEventListener('DOMContentLoaded', () => {
-//     const token = localStorage.getItem('token');
-//     const decodeToken = parseJwt(token)
-//     console.log(decodeToken);
-//     const ispremiumuser = decodeToken.ispremiumuser
-//     if (ispremiumuser) {
-//         showPremiumuserMessage();
-//         showLeaderboard();
-//     }
-//     axios.get('http://localhost:3000/expense/getexpenses', { headers: { 'Authorization': token } }).then(response => {
-//         console.log(response.data.data);
-//         response.data.data.forEach(expense => {
-//             addNewExpensetoUI(expense);
-//         })
-//     })
-// })
 
 
 function addNewExpensetoUI(expense) {
@@ -136,7 +121,7 @@ function addNewExpensetoUI(expense) {
 
 function deleteExpense(e, expenseid) {
     const token = localStorage.getItem('token');
-    axios.delete(`http://localhost:3000/expense/deleteexpense/${expenseid}`, { headers: { 'Authorization': token } }).then((response) => {
+    axios.delete(`http://localhost:3000/expense/delete-expense/${expenseid}`, { headers: { 'Authorization': token } }).then((response) => {
 
         if (response.status === 200) {
             removeExpensefromUI(expenseid);
@@ -175,7 +160,7 @@ function removeExpensefromUI(expenseid) {
 
 document.getElementById('rzp-button1').onclick = async function (e) {
     const token = localStorage.getItem('token')
-    const response = await axios.get('http://localhost:3000/purchase/premiummembership', { headers: { "Authorization": token } });
+    const response = await axios.get('http://localhost:3000/purchase/premium-membership', { headers: { "Authorization": token } });
     console.log(response);
     var options =
     {
