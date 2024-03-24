@@ -9,17 +9,16 @@ const login = async (e) => {
         password: e.target.password.value
     }
     const notif = document.getElementsByClassName('notif')[0];
-    console.log(loginDetails);
 
     try {
-        const res = await axios.post('http://localhost:3000/user/login', loginDetails)
+        const res = await axios.post('/user/login', loginDetails)
         console.log('res', res);
 
         if(res.data){
             // notif.classList.toggle('notif2');
             setTimeout(() => {
                 notif.classList.toggle('notif2');
-                window.location.href = "../ExpenseTracker/index.html"// change the page on successful login /
+                window.location.href = "/views/index.html"// change the page on successful login /
             }, 1500);
             notif.innerHTML = `${res.data.message}`;
             localStorage.setItem('token', res.data.token);
@@ -37,5 +36,5 @@ const login = async (e) => {
 }
 
 function forgotpassword() {
-    window.location.href = "../ForgotPassword/index.html"
+    window.location.href = "/views/forgot-password.html"
 }

@@ -15,10 +15,8 @@ async function addNewExpense(event) {
             description: event.target.description.value,
             category: event.target.category.value
         }
-        console.log(expenseDetails);
         const token = localStorage.getItem('token');
-        const response = await axios.post('http://localhost:3000/expense/add-expense', expenseDetails, { headers: { 'Authorization': token } })
-        console.log('res', response);
+        const response = await axios.post('/expense/add-expense', expenseDetails, { headers: { 'Authorization': token } })
         if (response.data) {
             console.log(response.data.expense)
             addNewExpensetoUI(response.data.expense);
@@ -53,8 +51,7 @@ async function sendGetRequest(page) {
         if (localStorage.getItem('number')) {
             number = localStorage.getItem('number');
         }
-        const { data } = await axios.get(`http://localhost:3000/expense/get-expenses?page=${page}&number=${number}`, { headers: { "Authorization": token } });
-        console.log(data);
+        const { data } = await axios.get(`/expense/get-expenses?page=${page}&number=${number}`, { headers: { "Authorization": token } });
         const { expenses, pageData } = data;
 
         ul.innerHTML = '';
@@ -89,7 +86,6 @@ async function sendGetRequest(page) {
 window.addEventListener('DOMContentLoaded', () => {
     const token = localStorage.getItem('token');
     const decodeToken = parseJwt(token)
-    console.log(decodeToken);
     const ispremiumuser = decodeToken.ispremiumuser;
 
     if (ispremiumuser) {
@@ -115,13 +111,15 @@ function addNewExpensetoUI(expense) {
            <p>  ${expense.category} </p> 
              <p> ${expense.description}</p>
           </div>
+          <div>
             <button class='del' onclick='deleteExpense(event, ${expense.id})'> Delete </button>
+          </div>
     </div>`;
 }
 
 function deleteExpense(e, expenseid) {
     const token = localStorage.getItem('token');
-    axios.delete(`http://localhost:3000/expense/delete-expense/${expenseid}`, { headers: { 'Authorization': token } }).then((response) => {
+    axios.delete(`/expense/delete-expense/${expenseid}`, { headers: { 'Authorization': token } }).then((response) => {
 
         if (response.status === 200) {
             removeExpensefromUI(expenseid);
@@ -141,8 +139,7 @@ function showLeaderboard() {
     inputElement.value = 'Show Leaderboard'
     inputElement.onclick = async () => {
         const token = localStorage.getItem('token')
-        const userLeaderBoardArray = await axios.get('http://localhost:3000/premium/showLeaderBoard', { headers: { "Authorization": token } })
-        console.log(userLeaderBoardArray)
+        const userLeaderBoardArray = await axios.get('/premium/showLeaderBoard', { headers: { "Authorization": token } })
 
         var leaderboardElem = document.getElementById('leaderboard')
         leaderboardElem.innerHTML += '<h1> Leader Board </<h1>'
@@ -160,15 +157,14 @@ function removeExpensefromUI(expenseid) {
 
 document.getElementById('rzp-button1').onclick = async function (e) {
     const token = localStorage.getItem('token')
-    const response = await axios.get('http://localhost:3000/purchase/premium-membership', { headers: { "Authorization": token } });
-    console.log(response);
+    const response = await axios.get('/purchase/premium-membership', { headers: { "Authorization": token } });
     var options =
     {
         "key": response.data.key_id, // Enter the Key ID generated from the Dashboard
         "order_id": response.data.order.id,// For one time payment
         // This handler function will handle the success payment
         "handler": async function (response) {
-            const res = await axios.post('http://localhost:3000/purchase/updatetransactionstatus', {
+            const res = await axios.post('/purchase/updatetransactionstatus', {
                 order_id: options.order_id,
                 payment_id: response.razorpay_payment_id,
             }, { headers: { "Authorization": token } })
@@ -193,9 +189,8 @@ document.getElementById('rzp-button1').onclick = async function (e) {
 
 function download() {
     const token = localStorage.getItem('token');
-    axios.get('http://localhost:3000/expense/download', { headers: { "Authorization": token } })
+    axios.get('/expense/download', { headers: { "Authorization": token } })
         .then((response) => {
-            console.log(response);
             if (response.status === 200) {
                 //the bcakend is essentially sending a download link
                 //  which if we open in browser, the file would download

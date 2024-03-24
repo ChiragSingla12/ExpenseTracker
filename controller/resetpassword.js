@@ -1,7 +1,6 @@
 const uuid = require('uuid');
 const bcrypt = require('bcrypt');
-// const nodemailer = require("nodemailer");
-const {transporter} = require('../config/mailconfig')
+const { transporter } = require('../config/mailconfig')
 const User = require('../models/user');
 const Forgotpassword = require('../models/forgotpassword');
 // const { main } = require('../config/mailconfig');
@@ -21,7 +20,7 @@ const forgotpassword = async (req, res) => {
                 to: email, // list of receivers
                 subject: "Hello ✔", // Subject line
                 text: "Hello world?", // plain text body
-                html: `<a href="http://localhost:3000/password/reset-password/${id}">Reset password</a>` // html body
+                html: `<a href="${process.env.WEBSITE}/password/reset-password/${id}">Reset password</a>` // html body
             });
 
             console.log("Message sent: %s", info.messageId);
@@ -58,7 +57,7 @@ const resetpassword = (req, res) => {
                                     </form>
                                 </html>`
             )
-            res.end()
+            res.end();
 
         }
     })

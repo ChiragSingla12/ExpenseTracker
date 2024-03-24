@@ -12,14 +12,13 @@ async function userDetail(event) {
         //localStorage.setItem('phonenumber', phonenumber);
 
         const signUpDetails = { name, email, password }
-        const response = await axios.post("http://localhost:3000/user/Signup", signUpDetails)
-        console.log(response);
+        const response = await axios.post('/user/Signup', signUpDetails)
 
         if (response.status === 201) {
             // notif.classList.toggle('notif2');
                 setTimeout(() => {
                     notif.classList.toggle('notif2');
-                    window.location.href = "../login/login.html"// change the page on successful login 
+                    window.location.href = "/views/login.html"// change the page on successful login 
                 }, 2000);
             notif.innerHTML = `${response.data.message}`;
         } 

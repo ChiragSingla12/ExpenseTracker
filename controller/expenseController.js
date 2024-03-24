@@ -48,15 +48,10 @@ const addexpense = async (req, res) => {
 
     }
     catch (err) {
-        console.log('err2', err)
         await t.rollback();
         return res.status(500).send({ 'success': false, 'error': err })
     }
 }
-
-
-
-
 
 const getexpenses = async (req, res) => {
     //     Expense.findAll({ where: { userId: req.user.id } }).then(expense => {
@@ -65,15 +60,14 @@ const getexpenses = async (req, res) => {
         // const currentPage = req.query.page || 1; // Changed 'Page' to 'page' for consistency
         // const limit = 5;
 
-        let {page, number} = req.query;
+        let { page, number } = req.query;
         currentPage = Number(page)
         number = Number(number)
 
+
         const total = await Expense.count({ where: { userId: req.user.id } });
 
-        console.log('know the type', number, typeof(number), currentPage, typeof(total));
         const hasNextPage = (currentPage * number) < total;
-        console.log(hasNextPage, '!?', currentPage * number, typeof (currentPage));
         const nextPage = hasNextPage ? Number(currentPage) + 1 : null; // Calculate next page number
 
         const expenses = await req.user.getExpenses({ offset: (currentPage - 1) * number, limit: number });
@@ -87,14 +81,12 @@ const getexpenses = async (req, res) => {
         };
 
         const response = { expenses, pageData }; // Combine expenses and pageData into a single object
-        console.log(pageData)
         res.status(200).json(response);
     } catch (err) {
         console.error(err);
         res.status(500).json({ error: 'An error occurred while fetching expenses.' });
     }
 }
-
 
 const deleteExpense = async (req, res) => {
     const t = await sequelize.transaction(); // kind of object
